@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { json, Link } from "react-router-dom";
 
 function Login() {
   let [username, setUsername] = useState("");
@@ -22,6 +22,29 @@ function Login() {
 
   function submitData(event) {
     event.preventDefault();
+
+    // Create user object
+    const userLoginData = {
+      username,
+      password,
+    };
+
+    console.log(userLoginData);
+
+    const loginData = JSON.parse(localStorage.getItem("userSignupData"));
+    console.log(loginData);
+
+    localStorage.getItem("token");
+
+    if (loginData) {
+      if (loginData.username == username && loginData.password == password) {
+        alert("Login successfuly");
+      } else {
+        alert("Username and Password did not match");
+      }
+    } else {
+      alert("User not found");
+    }
   }
 
   return (

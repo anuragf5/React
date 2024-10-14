@@ -36,6 +36,27 @@ function Signup() {
 
   function submitData(event) {
     event.preventDefault();
+
+    // Create user object
+    const userSignupData = {
+      username,
+      email,
+      password,
+      confirmPassword,
+    };
+
+    console.log(userSignupData);
+
+    // Save to local storage
+    localStorage.setItem("userSignupData", JSON.stringify(userSignupData));
+
+    // setUsername("");
+    // setEmail("");
+    // setPassword("");
+    // setConfirmPassword("");
+
+    const token = "dummy-token";
+    localStorage.setItem("token", token);
   }
 
   return (
@@ -113,9 +134,7 @@ function Signup() {
                   fontFamily: "Roboto, sans-serif",
                 }}
               >
-                <Link to={"/login/"}>
-                Login
-                </Link>
+                <Link to={"/login/"}>Login</Link>
               </span>
             </p>
 
