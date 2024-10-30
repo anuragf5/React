@@ -1549,11 +1549,11 @@
 }
 
 .browse_categories h3 {
-  padding: 0px 30px;
+  /* padding: 0px 30px; */
   margin-bottom: 20px;
   margin-top: 20px;
   font-family: "Heebo", sans-serif;
-  font-size: 18px;
+  font-size: 15px;
   color: #2a2a2a;
   font-weight: 500;
   line-height: 40px;
@@ -1572,19 +1572,24 @@
 .browse_category_content ul li {
   list-style: circle;
   margin-bottom: 18px;
-  padding-left: 30px;
-  font-size: 14px;
+  /* padding-left: 30px; */
+  /* font-size: 14px; */
   font-family: "Roboto", sans-serif;
   font-weight: normal;
   color: #797979;
 }
 
+.browse_category_content ul li:hover {
+  color: #000;
+  transition: all 300ms linear 0s;
+}
+
 .product_brand h3 {
-  padding: 0px 30px;
+  /* padding: 0px 30px; */
   margin-bottom: 20px;
   margin-top: 20px;
   font-family: "Heebo", sans-serif;
-  font-size: 18px;
+  font-size: 15px;
   color: #2a2a2a;
   font-weight: 500;
   line-height: 40px;
@@ -1603,18 +1608,24 @@
 .product_brand_content ul li {
   list-style: circle;
   margin-bottom: 18px;
-  font-size: 14px;
+  /* padding-left: 30px; */
+  /* font-size: 14px; */
   font-family: "Roboto", sans-serif;
   font-weight: normal;
   color: #797979;
 }
 
+.product_brand_content ul li:hover {
+  color: #000;
+  transition: all 300ms linear 0s;
+}
+
 .color_filter h3 {
-  padding: 0px 30px;
+  /* padding: 0px 30px; */
   margin-bottom: 20px;
   margin-top: 20px;
   font-family: "Heebo", sans-serif;
-  font-size: 18px;
+  font-size: 15px;
   color: #2a2a2a;
   font-weight: 500;
   line-height: 40px;
@@ -1633,18 +1644,24 @@
 .color_filter_content ul li {
   list-style: circle;
   margin-bottom: 18px;
-  font-size: 14px;
+  /* padding-left: 30px; */
+  /* font-size: 14px; */
   font-family: "Roboto", sans-serif;
   font-weight: normal;
   color: #797979;
 }
 
+.color_filter_content ul li:hover {
+  color: #000;
+  transition: all 300ms linear 0s;
+}
+
 .price_filter h3 {
-  padding: 0px 30px;
+  /* padding: 0px 30px; */
   margin-bottom: 20px;
   margin-top: 20px;
   font-family: "Heebo", sans-serif;
-  font-size: 18px;
+  font-size: 15px;
   color: #2a2a2a;
   font-weight: 500;
   line-height: 40px;
@@ -1655,6 +1672,7 @@
 
 .price_filter_range {
   padding-left: 30px;
+  padding-right: 30px;
 }
 
 .price_filter .price label {
@@ -1718,7 +1736,7 @@
   display: inline-block;
   border: 1px solid #eeeeee;
   height: 40px;
-  width: 120px;
+  width: 210px;
   padding-left: 20px;
   padding-right: 30px;
   margin-left: 10px;
