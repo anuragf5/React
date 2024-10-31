@@ -4,6 +4,7 @@ import shopCategoryProductsData from "../DummyData/ShopCategoryProducts";
 function ShoppingCategory() {
   const [selectedPriceValue, setSelectedPriceValue] = useState("");
   const [selectedRatingValue, setSelectedRatingValue] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
 
   const [sortedPirceData, setSortedPriceData] = useState(
     shopCategoryProductsData
@@ -60,6 +61,15 @@ function ShoppingCategory() {
 
     setSortedPriceData(newSortedRatingData); // Update the displayed data
   };
+
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value);
+  };
+
+  // Filter products based on search term
+  const filteredProducts = sortedPirceData.filter((product) =>
+    product.title.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <>
@@ -165,11 +175,22 @@ function ShoppingCategory() {
                   <option value="rating_high">Rating -- High to Low</option>
                 </select>
               </div>
+
+              <div className="shop_category_search_bar">
+                <form action="" className="search_bar">
+                  <input
+                    type="text"
+                    placeholder="Type to search..."
+                    value={searchTerm}
+                    onChange={handleSearchChange}
+                  />
+                </form>
+              </div>
             </div>
 
             <div className="latest_product_container">
               <div className="top_latest_products_container">
-                {sortedPirceData.map((item) => (
+                {filteredProducts.map((item) => (
                   <div className="first_latest_product_container" key={item.id}>
                     <img
                       src={item.image}
@@ -201,7 +222,7 @@ function ShoppingCategory() {
                       </span>
                       <p style={{ marginTop: "16px", fontSize: "16px" }}>
                         <span style={{ color: "#FFDF00", fontSize: "16px" }}>
-                          <i class="fa-solid fa-star"></i>
+                          <i className="fa-solid fa-star"></i>
                         </span>
                         {item.rating}
                       </p>
