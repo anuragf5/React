@@ -1,0 +1,17 @@
+
+
+body {
+  font-family: Arial, sans-serif;
+}
+
+button {
+  cursor: pointer;
+}
+
+input {
+  margin-right: 10px;
+}
+
+.btn_save_edit_profile:hover {
+  background-color: aliceblue;
+}
