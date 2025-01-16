@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const secretKey = "sadfbiuadsgmadfbldfabvmsfnugdfsnjfdjb";
+const secretKey = "";
 const userModel = require("../model/userModel");
 const bcrypt = require("bcrypt");
 
