@@ -2,7 +2,7 @@ const UserModel = require("../model/userModel");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const moment = require("moment");
-const secretKey = "kdfhogdfsgndfljgsdfbndfbjdfs";
+const secretKey = "";
 const nodemailer = require("nodemailer")
 
 const register = async (req, res) => {
