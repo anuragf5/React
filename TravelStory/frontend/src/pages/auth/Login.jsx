@@ -1,15 +1,43 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import PasswordInput from "../../components/input/PasswordInput";
+import { validateEmail } from "../../utils/helper";
+import API from "../../utils/api";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
-
-  const handleLogin = async (e) => {};
-
   const navigate = useNavigate();
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setError(null);
+
+    if (!validateEmail(email)) {
+      setError("Please enter a valid email address");
+      return;
+    }
+
+    if (!password) {
+      setError("Please enter the password");
+      return;
+    }
+
+    try {
+      const { data } = await API.post("/auth/login", {
+        email,
+        password,
+      });
+      console.log(">>>>> login data <<<<<", data);
+
+      setError("");
+      navigate("/home");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div className="h-screen bg-cyan-50 overflow-hidden relative">
       <div className="login-ui-box right-10 -top-40"></div>
@@ -29,12 +57,12 @@ const Login = () => {
           </div>
         </div>
 
-        <div className="w-2/4 h-[75vh] bg-white rounded-r-lg relative p-16 shadow-lg shadow-cyan-200/20">
-          <form action="" onSubmit={{ handleLogin }}>
+        <div className="w-2/5 h-[75vh] bg-white rounded-r-lg relative p-16 shadow-lg shadow-cyan-200/20">
+          <form action="" onSubmit={handleLogin}>
             <h4 className="text-2xl font-semibold mb-7">Login</h4>
 
             <input
-              type="text"
+              type="email"
               placeholder="Email"
               className="input-box"
               value={email}
@@ -49,6 +77,8 @@ const Login = () => {
                 setPassword(target.value);
               }}
             />
+
+            {error && <p className="text-red-500 text-l pb-1">{error}</p>}
 
             <button type="submit" className="btn-primary">
               LOGIN

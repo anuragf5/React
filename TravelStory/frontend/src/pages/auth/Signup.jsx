@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import PasswordInput from "../../components/input/PasswordInput";
 import { validateEmail } from "../../utils/helper";
+import API from "../../utils/api";
 
 const Signup = () => {
   const [name, setName] = useState("");
@@ -10,11 +11,11 @@ const Signup = () => {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  const handleSignup = async (e) => {
+  const handleSignup = async (e, req, res) => {
     e.preventDefault();
     setError(null);
 
-      if (!name) {
+    if (!name) {
       setError("Please enter your name");
       return;
     }
@@ -32,6 +33,23 @@ const Signup = () => {
     setError("");
 
     //Signup Api
+    try {
+      const { data } = await API.post("/auth/register", {
+        name,
+        email,
+        password,
+      });
+      console.log(">>>>> Signup data <<<<<",data);
+
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("name", data.user.name);
+      localStorage.setItem("userId", data.user._id);
+      localStorage.setItem("email", data.user.email);
+      navigate("/login", { state: { name } });
+    } catch (error) {
+      console.log(error);
+    }
+
     navigate("/");
   };
 
