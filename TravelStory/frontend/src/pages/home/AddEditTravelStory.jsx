@@ -1,6 +1,12 @@
 import React, { useState } from "react";
 import { MdAdd, MdDeleteOutline, MdUpdate, MdClose } from "react-icons/md";
 import DateSelector from "../../components/input/DateSelector";
+import ImageSelector from "../../components/input/ImageSelector";
+import TagInput from "../../components/input/TagInput";
+import API from "../../utils/api";
+import Moment from "moment";
+import { toast } from "react-toastify";
+import uploadImage from "../../utils/uploadImage";
 
 const AddEditTravelStory = ({
   storyInfo,
@@ -13,7 +19,67 @@ const AddEditTravelStory = ({
   const [story, setStory] = useState(null);
   const [visitedLocation, setVisitedLocation] = useState([]);
   const [visitedDate, setVisitedDate] = useState(null);
-  const handleAddOrUpdateClick = () => {};
+  const [error, setError] = useState("");
+
+  const updateTravelStory = async () => {};
+
+  const addNewTravelStory = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      let imageUrl = "";
+
+      if (storyImg) {
+        const imgUploadRes = await uploadImage(storyImg);
+        imageUrl = imgUploadRes.imageUrl || "";
+      }
+
+      const response = await API.post(
+        "/travelStory/addStory",
+        {
+          title,
+          story,
+          imageUrl: imageUrl || "",
+          visitedLocation,
+          visitedDate: visitedDate
+            ? Moment(visitedDate).valueOf()
+            : Moment().valueOf(),
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      console.log(response.data);
+
+      toast.success("Story added successfully");
+      getAllTravelStories();
+      onClose();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleAddOrUpdateClick = () => {
+    if (!title) {
+      alert("Please enter the title");
+      return;
+    }
+
+    if (!story) {
+      alert("Please enter the story");
+      return;
+    }
+
+    if (type === "edit") {
+      updateTravelStory();
+    } else {
+      addNewTravelStory();
+    }
+  };
+
+  const handleDeleteStoryImg = async () => {};
 
   return (
     <div>
@@ -25,7 +91,7 @@ const AddEditTravelStory = ({
         <div>
           <div className="flex items-center gap-3 bg-cyan-50/50 p-2 rounded-l-lg">
             {type === "add" ? (
-              <button className="btn-small" onClick={() => {}}>
+              <button className="btn-small" onClick={addNewTravelStory}>
                 <MdAdd className="text-lg" />
                 ADD STORY
               </button>
@@ -64,6 +130,35 @@ const AddEditTravelStory = ({
           />
           <div className="my-3">
             <DateSelector date={visitedDate} setDate={setVisitedDate} />
+          </div>
+
+          <ImageSelector
+            image={storyImg}
+            setImage={setStoryImg}
+            handleDeleteImage={handleDeleteStoryImg}
+          />
+
+          <div className="flex flex-col gap-2 mt-4">
+            <label htmlFor="" className="input-label">
+              Story
+            </label>
+            <textarea
+              className="text-sm text-slate-950 outline-none bg-slate-50 p-2 rounded"
+              name=""
+              id=""
+              type="text"
+              placeholder="Your story"
+              rows={10}
+              value={story}
+              onChange={({ target }) => setStory(target.value)}
+            ></textarea>
+          </div>
+
+          <div className="pt-3">
+            <label htmlFor="" className="input-label">
+              Visited Locations
+            </label>
+            <TagInput tags={visitedLocation} setTags={setVisitedLocation} />
           </div>
         </div>
       </div>
