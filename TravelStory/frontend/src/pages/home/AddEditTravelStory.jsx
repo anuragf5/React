@@ -14,14 +14,15 @@ const AddEditTravelStory = ({
   onClose,
   getAllTravelStories,
 }) => {
-  const [title, setTitle] = useState("");
-  const [storyImg, setStoryImg] = useState(null);
-  const [story, setStory] = useState(null);
-  const [visitedLocation, setVisitedLocation] = useState([]);
-  const [visitedDate, setVisitedDate] = useState(null);
-  const [error, setError] = useState("");
-
-  const updateTravelStory = async () => {};
+  const [title, setTitle] = useState(storyInfo?.title || "");
+  const [storyImg, setStoryImg] = useState(storyInfo?.imageUrl || null);
+  const [story, setStory] = useState(storyInfo?.story || null);
+  const [visitedLocation, setVisitedLocation] = useState(
+    storyInfo?.visitedLocation || []
+  );
+  const [visitedDate, setVisitedDate] = useState(
+    storyInfo?.visitedDate || null
+  );
 
   const addNewTravelStory = async () => {
     try {
@@ -61,6 +62,52 @@ const AddEditTravelStory = ({
     }
   };
 
+  const updateTravelStory = async () => {
+    const userId = storyInfo._id;
+    try {
+      const token = localStorage.getItem("token");
+      let imageUrl = "";
+
+      let postData = {
+        title,
+        story,
+        imageUrl: storyInfo.imageUrl || "",
+        visitedLocation,
+        visitedDate: visitedDate
+          ? Moment(visitedDate).valueOf()
+          : Moment().valueOf(),
+      };
+
+      if (typeof storyImg === "object") {
+        const imgUploadRes = await uploadImage(storyImg);
+        imageUrl = imgUploadRes.imageUrl || "";
+
+        postData = {
+          ...postData,
+          imageUrl: imageUrl,
+        };
+      }
+
+      const response = await API.post(
+        `/travelStory/editStoryById/${userId}`,
+        postData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      console.log(response.data);
+
+      toast.success("Story updated successfully");
+      getAllTravelStories();
+      onClose();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const handleAddOrUpdateClick = () => {
     if (!title) {
       alert("Please enter the title");
@@ -79,10 +126,49 @@ const AddEditTravelStory = ({
     }
   };
 
-  const handleDeleteStoryImg = async () => {};
+  const handleDeleteStoryImg = async () => {
+    try {
+      const token = localStorage.getItem("token");
+
+      const deleteImageResponse = await API.delete(`/travelStory/deleteImages`, {
+        params: {
+          imageUrl: storyInfo.imageUrl,
+        },
+      });
+
+      console.log(deleteImageResponse.data);
+
+      if (deleteImageResponse.data) {
+        const storyId = storyInfo._id;
+
+        let postData = {
+          title,
+          story,
+          imageUrl: "",
+          visitedLocation,
+          visitedDate: Moment().valueOf(),
+        };
+
+        const response = await API.post(
+          `/travelStory/editStoryById/${storyId}`,
+          postData,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        setStoryImg(null);
+      }
+
+      } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
-    <div>
+    <div className="relative">
       <div className="flex items-center justify-between">
         <h5 className="text-xl font-medium text-slate-700">
           {type === "add" ? "Add Story" : "Update Story"}
