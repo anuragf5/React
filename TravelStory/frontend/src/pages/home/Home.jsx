@@ -7,6 +7,10 @@ import { ToastContainer, toast } from "react-toastify";
 import { MdAdd } from "react-icons/md";
 import Modal from "react-modal";
 import AddEditTravelStory from "./AddEditTravelStory";
+import ViewTravelStory from "./ViewTravelStory";
+import EmptyCard from "../../components/cards/EmptyCard";
+
+import EmptyImage from "../../assets/react.svg";
 
 const Home = () => {
   const [userInfo, setUserInfo] = useState(null);
@@ -14,6 +18,11 @@ const Home = () => {
   const [openAddEditModal, setOpenAddEditModal] = useState({
     isShown: false,
     type: "add",
+    data: null,
+  });
+
+  const [openViewModal, setViewModal] = useState({
+    isShown: false,
     data: null,
   });
 
@@ -73,15 +82,45 @@ const Home = () => {
         ">>>>> Update favorite travel stories from Home page <<<<<",
         response.data
       );
-      toast.success("Story updated successfully");
+      toast.success("Story added to favorite");
       getAllTravelStories();
     } catch (error) {
       console.log(error);
     }
   };
 
-  const handleEdit = (data) => {};
-  const handleViewStory = (data) => {};
+  //Delete story
+  const deleteTravelStory = async (data) => {
+    const storyId = data._id;
+
+    try {
+      const token = localStorage.getItem("token");
+      const response = await API.delete(
+        `/travelStory/deleteStoryById/${storyId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      console.log("Deleted travel story response from home page: ", response);
+
+      toast.error("Story deleted successfully");
+      setViewModal((prevState) => ({ ...prevState, isShown: false }));
+      getAllTravelStories();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleEdit = (data) => {
+    setOpenAddEditModal({ isShown: true, type: "edit", data: data });
+  };
+
+  const handleViewStory = (data) => {
+    setViewModal({ isShown: true, data });
+  };
 
   useEffect(() => {
     getAllTravelStories();
@@ -115,7 +154,11 @@ const Home = () => {
                 })}
               </div>
             ) : (
-              <p>No travel stories available.</p>
+              <EmptyCard
+                imgSrc={EmptyImage}
+                message={`Start creating your first Travel Story! Click the 'Add' button to write down your thoughts, ideas and memories.
+                  Let's get started.`}
+              />
             )}
           </div>
           <div className="w-[320px]"></div>
@@ -142,6 +185,33 @@ const Home = () => {
             setOpenAddEditModal({ isShown: false, type: "add", data: null });
           }}
           getAllTravelStories={getAllTravelStories}
+        />
+      </Modal>
+
+      <Modal
+        className="modal-box"
+        isOpen={openViewModal.isShown}
+        onRequestClose={() => {}}
+        style={{
+          overlay: {
+            backgroundColor: "rgba(0,0,0,0.2)",
+            zIndex: 999,
+          },
+        }}
+        appElement={document.getElementById("root")}
+      >
+        <ViewTravelStory
+          storyInfo={openViewModal.data || null}
+          onclose={() => {
+            setViewModal((prevState) => ({ ...prevState, isShown: false }));
+          }}
+          onEditClick={() => {
+            setViewModal((prevState) => ({ ...prevState, isShown: false }));
+            handleEdit(openViewModal.data || null);
+          }}
+          onDeleteClick={() => {
+            deleteTravelStory(openViewModal.data || null);
+          }}
         />
       </Modal>
 
