@@ -9,8 +9,11 @@ import Modal from "react-modal";
 import AddEditTravelStory from "./AddEditTravelStory";
 import ViewTravelStory from "./ViewTravelStory";
 import EmptyCard from "../../components/cards/EmptyCard";
+import FilterInfoTitle from "../../components/cards/FilterInfoTitle";
 
 import EmptyImage from "../../assets/react.svg";
+import { DayPicker } from "react-day-picker";
+import moment from "moment";
 
 const Home = () => {
   const [userInfo, setUserInfo] = useState(null);
@@ -25,6 +28,10 @@ const Home = () => {
     isShown: false,
     data: null,
   });
+
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filterType, setFilterType] = useState("");
+  const [dateRange, setdDateRange] = useState({ form: null, to: null });
 
   const navigate = useNavigate();
 
@@ -114,6 +121,68 @@ const Home = () => {
     }
   };
 
+  //Search story
+  const onSearchStory = async (query) => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await API.get(`/travelStory/searchTravelStory`, {
+        params: {
+          query,
+        },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      console.log("Search travel story response from home page: ", response);
+      setFilterType("Search...");
+      setAllTravelStory(response.data.stories);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleClearSearch = () => {
+    setFilterType("");
+    getAllTravelStories();
+  };
+
+  const filterStoriesByDate = async (day) => {
+    try {
+      const startDate = day.from ? moment(day.from).valueOf() : null;
+      const endDate = day.to ? moment(day.to).valueOf() : null;
+      const token = localStorage.getItem("token");
+
+      if (startDate && endDate) {
+        const response = API.get("/travelStory/filterTravelStory", {
+          params: {
+            startDate,
+            endDate,
+          },
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        setFilterType("date");
+        setAllTravelStory((await response).data.stories);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleDayClick = (day) => {
+    setdDateRange(day);
+    filterStoriesByDate(day);
+  };
+
+  const resetFilter = ()=>{
+    setdDateRange({form:null, to:null});
+    setFilterType("");
+    getAllTravelStories();
+  }
+
   const handleEdit = (data) => {
     setOpenAddEditModal({ isShown: true, type: "edit", data: data });
   };
@@ -129,9 +198,22 @@ const Home = () => {
 
   return (
     <>
-      <Navbar />
+      <Navbar
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+        onSearchNote={onSearchStory}
+        handleClearSearch={handleClearSearch}
+      />
 
       <div className="container mx-auto py-10">
+        <FilterInfoTitle
+          filterType={filterType}
+          filterDates={dateRange}
+          onClear={() => {
+            resetFilter();
+          }}
+        />
+
         <div className="flex gap-7">
           <div className="flex-1">
             {allTravelStory.length > 0 ? (
@@ -161,7 +243,20 @@ const Home = () => {
               />
             )}
           </div>
-          <div className="w-[320px]"></div>
+
+          <div className="w-[320px]">
+            <div className="bg-white border border-slate-200 shadow-slate-200/60 rounded-lg">
+              <div className="p-3">
+                <DayPicker
+                  captionLayout="dropdown-buttons"
+                  mode="range"
+                  selected={dateRange}
+                  onSelect={handleDayClick}
+                  pageNavigation
+                />
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
