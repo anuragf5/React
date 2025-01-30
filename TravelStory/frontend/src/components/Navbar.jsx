@@ -1,6 +1,24 @@
 import React from "react";
 import ProfileInfo from "./cards/ProfileInfo";
-const Navbar = () => {
+import SearchBar from "./input/SearchBar";
+
+const Navbar = ({
+  searchQuery,
+  setSearchQuery,
+  onSearchNote,
+  handleClearSearch,
+}) => {
+  const handleSearch = () => {
+    if (searchQuery) {
+      onSearchNote(searchQuery);
+    }
+  };
+
+  const onClearSearch = () => {
+    handleClearSearch();
+    setSearchQuery("");
+  };
+
   return (
     <>
       <div className="bg-white flex items-center justify-between px-6 py-2 drop-shadow sticky top-0 z-10">
@@ -9,7 +27,15 @@ const Navbar = () => {
           alt=""
           className="h-20"
         />
-        <ProfileInfo/>
+        <SearchBar
+          value={searchQuery}
+          onChange={({ target }) => {
+            setSearchQuery(target.value);
+          }}
+          handleSearch={handleSearch}
+          onClearSearch={onClearSearch}
+        />
+        <ProfileInfo />
       </div>
     </>
   );
